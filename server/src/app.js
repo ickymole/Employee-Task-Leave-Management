@@ -18,7 +18,8 @@ app.use(morgan("dev"));
 //Authentication routes
 app.use("/api/auth", authRoutes);
 
-// Test API route
+
+// Health API 
 app.get("/api/health", (req, res) => {
     res.status(200).json({
         success: true,
