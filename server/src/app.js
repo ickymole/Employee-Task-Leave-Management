@@ -5,6 +5,8 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 
 const authRoutes = require("./routes/authRoutes");
+const employeeRoutes = require("./routes/employeeRoutes");
+
 
 const app = express();
 
@@ -17,6 +19,7 @@ app.use(morgan("dev"));
 
 //Authentication routes
 app.use("/api/auth", authRoutes);
+app.use("/api/employees", employeeRoutes);
 
 
 // Health API 
