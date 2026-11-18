@@ -6,6 +6,8 @@ const morgan = require("morgan");
 
 const authRoutes = require("./routes/authRoutes");
 const employeeRoutes = require("./routes/employeeRoutes");
+const taskRoutes = require("./routes/taskRoutes");
+const employeeTaskRoutes = require("./routes/employeeTaskRoutes");
 
 
 const app = express();
@@ -20,6 +22,8 @@ app.use(morgan("dev"));
 //Authentication routes
 app.use("/api/auth", authRoutes);
 app.use("/api/employees", employeeRoutes);
+app.use("/api/tasks", taskRoutes);
+app.use("/api/employee-tasks", employeeTaskRoutes);
 
 
 // Health API 
