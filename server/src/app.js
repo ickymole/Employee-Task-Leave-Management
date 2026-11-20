@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
+const leaveRoutes = require("./routes/leaveRoutes");
 
 const authRoutes = require("./routes/authRoutes");
 const employeeRoutes = require("./routes/employeeRoutes");
@@ -24,6 +25,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/employee-tasks", employeeTaskRoutes);
+app.use("/api/leaves", leaveRoutes);
 
 
 // Health API 
