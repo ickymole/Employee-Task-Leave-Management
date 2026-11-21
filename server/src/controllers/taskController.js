@@ -2,6 +2,7 @@ const Task = require("../models/Task");
 const Employee = require("../models/Employee");
 const mongoose = require("mongoose");
 const handleError = require("../utils/handleError");
+const Notification = require("../models/Notification");
 
 // Validate MongoDB ObjectId
 const isValidObjectId = (id) => {
@@ -79,6 +80,16 @@ const createTask = async (req, res) => {
       status: status || "Pending",
       dueDate,
     });
+
+    // Create notification for assigned employee
+    await Notification.create({
+      recipient: employee.user,
+      title: "New task assigned",
+      message: `You have been assigned a new task: ${task.title}`,
+      type: "Task",
+      relatedId: task._id,
+    });
+
     // Return task with employee details
     const populatedTask = await Task.findById(task._id)
       .populate({
@@ -95,9 +106,9 @@ const createTask = async (req, res) => {
       message: "Task created successfully",
       task: populatedTask,
     });
-} catch (error) {
+  } catch (error) {
     handleError(res, error);
-}
+  }
 };
 
 const getAllTasks = async (req, res) => {
@@ -106,28 +117,28 @@ const getAllTasks = async (req, res) => {
 
     const filter = {};
     // Validate status filter
-if (status && !allowedStatuses.includes(status)) {
-    return res.status(400).json({
+    if (status && !allowedStatuses.includes(status)) {
+      return res.status(400).json({
         success: false,
-        message: "Invalid task status filter"
-    });
-}
+        message: "Invalid task status filter",
+      });
+    }
 
-// Validate priority filter
-if (priority && !allowedPriorities.includes(priority)) {
-    return res.status(400).json({
+    // Validate priority filter
+    if (priority && !allowedPriorities.includes(priority)) {
+      return res.status(400).json({
         success: false,
-        message: "Invalid task priority filter"
-    });
-}
+        message: "Invalid task priority filter",
+      });
+    }
 
-// Validate assigned employee ID filter
-if (assignedTo && !isValidObjectId(assignedTo)) {
-    return res.status(400).json({
+    // Validate assigned employee ID filter
+    if (assignedTo && !isValidObjectId(assignedTo)) {
+      return res.status(400).json({
         success: false,
-        message: "Invalid employee ID filter"
-    });
-}
+        message: "Invalid employee ID filter",
+      });
+    }
     if (status) {
       filter.status = status;
     }
@@ -173,9 +184,9 @@ if (assignedTo && !isValidObjectId(assignedTo)) {
       count: tasks.length,
       tasks,
     });
- } catch (error) {
+  } catch (error) {
     handleError(res, error);
-}
+  }
 };
 
 const getTaskById = async (req, res) => {
@@ -207,9 +218,9 @@ const getTaskById = async (req, res) => {
       success: true,
       task,
     });
- } catch (error) {
+  } catch (error) {
     handleError(res, error);
-}
+  }
 };
 
 const updateTask = async (req, res) => {
@@ -250,6 +261,7 @@ const updateTask = async (req, res) => {
           message: "Invalid employee ID",
         });
       }
+
       const employee = await Employee.findById(assignedTo);
 
       if (!employee) {
@@ -266,7 +278,21 @@ const updateTask = async (req, res) => {
         });
       }
 
+      // Check whether the assigned employee has changed
+      const isReassigned = task.assignedTo.toString() !== assignedTo.toString();
+
       task.assignedTo = assignedTo;
+
+      // Notify the new employee only when reassigned
+      if (isReassigned) {
+        await Notification.create({
+          recipient: employee.user,
+          title: "Task reassigned to you",
+          message: `A task has been assigned to you: ${task.title}`,
+          type: "Task",
+          relatedId: task._id,
+        });
+      }
     }
 
     // Update priority
@@ -324,9 +350,9 @@ const updateTask = async (req, res) => {
       message: "Task updated successfully",
       task: updatedTask,
     });
- } catch (error) {
+  } catch (error) {
     handleError(res, error);
-}
+  }
 };
 
 const deleteTask = async (req, res) => {
@@ -352,9 +378,9 @@ const deleteTask = async (req, res) => {
       success: true,
       message: "Task deleted successfully",
     });
- } catch (error) {
+  } catch (error) {
     handleError(res, error);
-}
+  }
 };
 
 module.exports = {

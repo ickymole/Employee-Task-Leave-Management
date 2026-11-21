@@ -2,6 +2,7 @@ const Leave = require("../models/Leave");
 const Employee = require("../models/Employee");
 const mongoose = require("mongoose");
 const handleError = require("../utils/handleError");
+const Notification = require("../models/Notification");
 
 // Apply for leave
 const applyLeave = async (req, res) => {
@@ -299,6 +300,18 @@ const reviewLeave = async (req, res) => {
     leave.reviewedAt = new Date();
 
     await leave.save();
+    // Notify employee about leave approval or rejection
+    const employee = await Employee.findById(leave.employee);
+
+    if (employee) {
+      await Notification.create({
+        recipient: employee.user,
+        title: `Leave ${status.toLowerCase()}`,
+        message: `Your ${leave.leaveType} leave application has been ${status.toLowerCase()}.`,
+        type: "Leave",
+        relatedId: leave._id,
+      });
+    }
 
     res.status(200).json({
       success: true,

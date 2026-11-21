@@ -11,6 +11,7 @@ const taskRoutes = require("./routes/taskRoutes");
 const employeeTaskRoutes = require("./routes/employeeTaskRoutes");
 const leaveRoutes = require("./routes/leaveRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 
 const app = express();
@@ -29,6 +30,7 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/employee-tasks", employeeTaskRoutes);
 app.use("/api/leaves", leaveRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 
 // Health API 
