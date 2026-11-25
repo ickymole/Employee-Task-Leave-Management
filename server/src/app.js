@@ -12,7 +12,7 @@ const employeeTaskRoutes = require("./routes/employeeTaskRoutes");
 const leaveRoutes = require("./routes/leaveRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
-
+const attendanceRoutes = require("./routes/attendanceRoutes");
 
 const app = express();
 
@@ -31,6 +31,7 @@ app.use("/api/employee-tasks", employeeTaskRoutes);
 app.use("/api/leaves", leaveRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/attendance", attendanceRoutes);
 
 
 // Health API 
